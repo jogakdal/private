@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+//package com.atlas.nlp.grpc;
+
+//option go_package = "cass";
+
+option java_multiple_files = true;
+option java_package = "com.atlas.nlp.grpc"; // 생성할 패키지 명
+option java_outer_classname = "CassGrpc"; // 생성할 기본 클래스 명
+
+service Cass {
+  // Classify demo
+  rpc ClassifyRegexModel (ClassificationRequest) returns (SimpleResult) {}
+
+  // Classify a request
+  rpc ClassifyTracyDepth (ClassificationRequest) returns (ClassificationResponse) {}
+
+  // Classify with other model
+  rpc ClassifyOtherModel (ClassificationRequest) returns (ClassificationResponse) {}
+
+  // List all available classifiers
+  rpc ListClassifiers (ListClassifiersRequest) returns (ListClassifiersResponse) {}
+}
+
+message SimpleResult {
+  string text = 1;
+}
+
+message ClassificationRequest {
+  // The text to classify
+  string text = 1;
+
+  // Number of top predictions to return
+  int32 n = 2;
+
+  // The models to run on the text
+  repeated string models = 3;
+}
+
+message ScoredLabel {
+  // Label
+  string label = 1;
+
+  // Probability score
+  float score = 2;
+
+  // Category Code
+  string code = 3;
+}
+
+message ClassificationResult {
+  // The name of the classifier who predicted the label
+  string model = 1;
+
+  // The predicted label
+  repeated ScoredLabel result = 3;
+}
+
+message ClassificationResponse {
+  repeated ClassificationResult result = 1;
+
+  // Server status
+  HealthStatus status = 2;
+}
+
+message ListClassifiersRequest {}
+
+message ListClassifiersResponse {
+  // Name of the classifier
+  repeated string name = 1;
+ }
+
+enum HealthStatus {
+  OK = 0;
+  BUSY = 1;
+  CRASHED = 2;
+}
